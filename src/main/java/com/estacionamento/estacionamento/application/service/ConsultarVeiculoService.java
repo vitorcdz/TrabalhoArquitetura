@@ -1,5 +1,4 @@
-
-package com.estacionamento.application.service;
+package com.estacionamento.estacionamento.application.service;
 
 import com.estacionamento.estacionamento.application.port.in.ConsultarVeiculoUseCase;
 import com.estacionamento.estacionamento.application.port.out.VeiculoRepositoryPort;
