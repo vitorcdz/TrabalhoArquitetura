@@ -39,3 +39,9 @@ Sistema de estacionamento para faculdade, feito para demonstrar a **arquitetura 
 - Códigos HTTP: `404` vaga/ticket/veículo/pagamento inexistente; `409` conflito de estado
   (vaga ocupada, veículo já estacionado, tipo incompatível, ticket já finalizado/pago);
   `400` dados inválidos.
+
+## Diagramas
+
+- Pacotes: `diagramas/diagrama-de-pacotes-Estacionamento.png`
+- Componentes: `diagramas/diagrama-de-componentes-Estacionamento.png`
+- Implantação: `diagramas/DiagramaDeImplantaçãoEstacionamento.pdf`
