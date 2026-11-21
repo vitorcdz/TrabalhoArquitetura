@@ -1,5 +1,9 @@
 package com.estacionamento.estacionamento.adapter.in.web;
 
+import com.estacionamento.estacionamento.domain.exception.VagaJaCadastradaException;
+import com.estacionamento.estacionamento.domain.exception.VagaJaLivreException;
+import com.estacionamento.estacionamento.domain.exception.VagaNaoEncontradaException;
+import com.estacionamento.estacionamento.domain.exception.VagaOcupadaException;
 import com.estacionamento.estacionamento.domain.exception.VeiculoJaCadastradoException;
 import com.estacionamento.estacionamento.domain.exception.VeiculoNaoEncontradoException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VeiculoNaoEncontradoException.class)
     public ResponseEntity<Map<String, String>> naoEncontrado(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("erro", ex.getMessage()));
+    }
+
+    @ExceptionHandler({
+            VagaOcupadaException.class,
+            VagaJaLivreException.class,
+            VagaJaCadastradaException.class,
+            IllegalStateException.class
+    })
+    public ResponseEntity<Map<String, String>> conflitoDeEstado(Exception ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("erro", ex.getMessage()));
+    }
+
+    @ExceptionHandler(VagaNaoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> vagaNaoEncontrada(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("erro", ex.getMessage()));
     }
