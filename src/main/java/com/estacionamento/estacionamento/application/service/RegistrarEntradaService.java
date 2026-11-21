@@ -3,8 +3,13 @@ package com.estacionamento.estacionamento.application.service;
 import com.estacionamento.estacionamento.application.port.in.RegistrarEntradaUseCase;
 import com.estacionamento.estacionamento.application.port.out.TicketRepositoryPort;
 import com.estacionamento.estacionamento.application.port.out.VagaRepositoryPort;
+import com.estacionamento.estacionamento.application.port.out.VeiculoRepositoryPort;
+import com.estacionamento.estacionamento.domain.exception.VagaIncompativelException;
+import com.estacionamento.estacionamento.domain.exception.VagaNaoEncontradaException;
+import com.estacionamento.estacionamento.domain.exception.VeiculoNaoEncontradoException;
 import com.estacionamento.estacionamento.domain.model.Ticket;
 import com.estacionamento.estacionamento.domain.model.Vaga;
+import com.estacionamento.estacionamento.domain.model.Veiculo;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,13 +20,16 @@ public class RegistrarEntradaService
 
     private final TicketRepositoryPort ticketRepository;
     private final VagaRepositoryPort vagaRepository;
+    private final VeiculoRepositoryPort veiculoRepository;
 
     public RegistrarEntradaService(
             TicketRepositoryPort ticketRepository,
-            VagaRepositoryPort vagaRepository) {
+            VagaRepositoryPort vagaRepository,
+            VeiculoRepositoryPort veiculoRepository) {
 
         this.ticketRepository = ticketRepository;
         this.vagaRepository = vagaRepository;
+        this.veiculoRepository = veiculoRepository;
     }
 
     @Override
@@ -34,7 +42,16 @@ public class RegistrarEntradaService
             );
         }
 
-        if (ticketRepository.existeTicketAtivo(placa)) {
+        // Mesma normalizacao usada no cadastro do veiculo.
+        String placaNormalizada = placa.toUpperCase().trim();
+
+        // O tipo do veiculo vem do cadastro, nao do cliente da API.
+        Veiculo veiculo = veiculoRepository.buscarPorPlaca(placaNormalizada)
+                .orElseThrow(() ->
+                        new VeiculoNaoEncontradoException(placaNormalizada)
+                );
+
+        if (ticketRepository.existeTicketAtivo(placaNormalizada)) {
             throw new IllegalStateException(
                     "Veiculo ja esta estacionado"
             );
@@ -42,21 +59,22 @@ public class RegistrarEntradaService
 
         Vaga vaga = vagaRepository.buscarPorId(vagaId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Vaga nao encontrada"
-                        )
+                        new VagaNaoEncontradaException(vagaId)
                 );
 
-        if (vaga.isOcupada()) {
-            throw new IllegalStateException(
-                    "Vaga ja esta ocupada"
+        if (!vaga.aceita(veiculo.getTipo())) {
+            throw new VagaIncompativelException(
+                    vaga.getNumero(),
+                    vaga.getTipo(),
+                    veiculo.getTipo()
             );
         }
 
-        vaga.setOcupada(true);
+        // Lanca VagaOcupadaException se a vaga ja estiver ocupada.
+        vaga.ocupar();
         vagaRepository.salvar(vaga);
 
-        Ticket ticket = new Ticket(placa, vagaId);
+        Ticket ticket = new Ticket(placaNormalizada, vagaId);
 
         return ticketRepository.salvar(ticket);
     }

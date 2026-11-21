@@ -1,8 +1,8 @@
 package com.estacionamento.estacionamento.adapter.in.web;
 
+import com.estacionamento.estacionamento.adapter.in.web.dto.TicketResponse;
 import com.estacionamento.estacionamento.application.port.in.RegistrarEntradaUseCase;
 import com.estacionamento.estacionamento.application.port.in.RegistrarSaidaUseCase;
-import com.estacionamento.estacionamento.domain.model.Ticket;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -22,17 +22,17 @@ public class EstacionamentoController {
     }
 
     @PostMapping("/entradas")
-    public Ticket registrarEntrada(
+    public TicketResponse registrarEntrada(
             @RequestParam String placa,
             @RequestParam Long vagaId) {
 
-        return entrada.executar(placa, vagaId);
+        return TicketResponse.from(entrada.executar(placa, vagaId));
     }
 
     @PostMapping("/{ticketId}/saida")
-    public Ticket registrarSaida(
+    public TicketResponse registrarSaida(
             @PathVariable Long ticketId) {
 
-        return saida.executar(ticketId);
+        return TicketResponse.from(saida.executar(ticketId));
     }
 }

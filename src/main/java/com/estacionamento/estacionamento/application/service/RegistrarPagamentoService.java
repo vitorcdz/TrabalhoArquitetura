@@ -3,6 +3,8 @@ package com.estacionamento.estacionamento.application.service;
 import com.estacionamento.estacionamento.application.port.in.RegistrarPagamentoUseCase;
 import com.estacionamento.estacionamento.application.port.out.PagamentoRepositoryPort;
 import com.estacionamento.estacionamento.application.port.out.TicketRepositoryPort;
+import com.estacionamento.estacionamento.domain.exception.TicketNaoEncontradoException;
+import com.estacionamento.estacionamento.domain.model.FormaPagamento;
 import com.estacionamento.estacionamento.domain.model.Pagamento;
 import com.estacionamento.estacionamento.domain.model.Ticket;
 import com.estacionamento.estacionamento.domain.service.CalculadoraTarifa;
@@ -26,19 +28,19 @@ public class RegistrarPagamentoService implements RegistrarPagamentoUseCase {
 
     @Override
     @Transactional
-    public Pagamento executar(Long ticketId, String formaPagamento) {
+    public Pagamento executar(Long ticketId, FormaPagamento formaPagamento) {
 
         if (ticketId == null) {
             throw new IllegalArgumentException("ID do ticket nao informado");
         }
 
-        if (formaPagamento == null || formaPagamento.isBlank()) {
+        if (formaPagamento == null) {
             throw new IllegalArgumentException("Forma de pagamento nao informada");
         }
 
         Ticket ticket = ticketRepository.buscarPorId(ticketId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Ticket nao encontrado"));
+                        new TicketNaoEncontradoException(ticketId));
 
         if (!"FINALIZADO".equals(ticket.getStatus())) {
             throw new IllegalStateException(

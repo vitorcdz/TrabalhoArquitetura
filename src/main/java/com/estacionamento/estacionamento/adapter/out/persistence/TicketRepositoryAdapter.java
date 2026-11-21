@@ -6,6 +6,7 @@ import com.estacionamento.estacionamento.domain.model.Ticket;
 import com.estacionamento.estacionamento.adapter.out.persistence.entity.TicketEntity;
 import com.estacionamento.estacionamento.adapter.out.persistence.repository.TicketJpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -47,6 +48,22 @@ public class TicketRepositoryAdapter
         return repository.existsByPlacaAndStatus(
                 placa, "ATIVO"
         );
+    }
+
+    @Override
+    public List<Ticket> listarTodos() {
+        return repository.findAll()
+                .stream()
+                .map(this::converter)
+                .toList();
+    }
+
+    @Override
+    public List<Ticket> listarPorStatus(String status) {
+        return repository.findByStatus(status)
+                .stream()
+                .map(this::converter)
+                .toList();
     }
 
     private Ticket converter(TicketEntity entity) {

@@ -34,6 +34,20 @@ public class PagamentoRepositoryAdapter
     }
 
     @Override
+    public Optional<Pagamento> buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(this::converter);
+    }
+
+    @Override
+    public List<Pagamento> listarTodos() {
+        return repository.findAll()
+                .stream()
+                .map(this::converter)
+                .toList();
+    }
+
+    @Override
     public Optional<Pagamento> buscarPorTicketId(Long ticketId) {
         return repository.findByTicketId(ticketId)
                 .map(this::converter);

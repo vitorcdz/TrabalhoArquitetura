@@ -1,5 +1,8 @@
 package com.estacionamento.estacionamento.adapter.in.web;
 
+import com.estacionamento.estacionamento.domain.exception.PagamentoNaoEncontradoException;
+import com.estacionamento.estacionamento.domain.exception.TicketNaoEncontradoException;
+import com.estacionamento.estacionamento.domain.exception.VagaIncompativelException;
 import com.estacionamento.estacionamento.domain.exception.VagaJaCadastradaException;
 import com.estacionamento.estacionamento.domain.exception.VagaJaLivreException;
 import com.estacionamento.estacionamento.domain.exception.VagaNaoEncontradaException;
@@ -21,7 +24,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("erro", ex.getMessage()));
     }
 
-    @ExceptionHandler(VeiculoNaoEncontradoException.class)
+    @ExceptionHandler({
+            VeiculoNaoEncontradoException.class,
+            VagaNaoEncontradaException.class,
+            TicketNaoEncontradoException.class,
+            PagamentoNaoEncontradoException.class
+    })
     public ResponseEntity<Map<String, String>> naoEncontrado(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("erro", ex.getMessage()));
@@ -31,16 +39,11 @@ public class GlobalExceptionHandler {
             VagaOcupadaException.class,
             VagaJaLivreException.class,
             VagaJaCadastradaException.class,
+            VagaIncompativelException.class,
             IllegalStateException.class
     })
     public ResponseEntity<Map<String, String>> conflitoDeEstado(Exception ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("erro", ex.getMessage()));
-    }
-
-    @ExceptionHandler(VagaNaoEncontradaException.class)
-    public ResponseEntity<Map<String, String>> vagaNaoEncontrada(Exception ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("erro", ex.getMessage()));
     }
 

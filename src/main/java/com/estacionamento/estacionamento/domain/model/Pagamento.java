@@ -9,12 +9,12 @@ public class Pagamento {
     private Long ticketId;
     private BigDecimal valor;
     private LocalDateTime dataPagamento;
-    private String formaPagamento;
+    private FormaPagamento formaPagamento;
 
     public Pagamento() {
     }
 
-    public Pagamento(Long ticketId, BigDecimal valor, String formaPagamento) {
+    public Pagamento(Long ticketId, BigDecimal valor, FormaPagamento formaPagamento) {
         this.ticketId = ticketId;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
@@ -53,11 +53,11 @@ public class Pagamento {
         this.dataPagamento = dataPagamento;
     }
 
-    public String getFormaPagamento() {
+    public FormaPagamento getFormaPagamento() {
         return formaPagamento;
     }
 
-    public void setFormaPagamento(String formaPagamento) {
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
 }

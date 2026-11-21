@@ -1,5 +1,6 @@
 package com.estacionamento.estacionamento.adapter.out.persistence.entity;
 
+import com.estacionamento.estacionamento.domain.model.FormaPagamento;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,8 +22,9 @@ public class PagamentoEntity {
     @Column(name = "data_pagamento", nullable = false)
     private LocalDateTime dataPagamento;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "forma_pagamento", nullable = false)
-    private String formaPagamento;
+    private FormaPagamento formaPagamento;
 
     public Long getId() {
         return id;
@@ -56,11 +58,11 @@ public class PagamentoEntity {
         this.dataPagamento = dataPagamento;
     }
 
-    public String getFormaPagamento() {
+    public FormaPagamento getFormaPagamento() {
         return formaPagamento;
     }
 
-    public void setFormaPagamento(String formaPagamento) {
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
 }

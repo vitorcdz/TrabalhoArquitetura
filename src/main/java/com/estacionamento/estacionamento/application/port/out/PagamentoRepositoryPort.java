@@ -11,7 +11,11 @@ public interface PagamentoRepositoryPort {
 
     Pagamento salvar(Pagamento pagamento);
 
+    Optional<Pagamento> buscarPorId(Long id);
+
     Optional<Pagamento> buscarPorTicketId(Long ticketId);
+
+    List<Pagamento> listarTodos();
 
     List<Pagamento> buscarPorPeriodo(
             LocalDateTime inicio,

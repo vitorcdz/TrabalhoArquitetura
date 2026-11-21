@@ -2,7 +2,9 @@ package com.estacionamento.estacionamento.support;
 
 import com.estacionamento.estacionamento.application.port.out.TicketRepositoryPort;
 import com.estacionamento.estacionamento.domain.model.Ticket;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,5 +32,17 @@ public class InMemoryTicketRepository implements TicketRepositoryPort {
         return banco.values().stream()
                 .anyMatch(t -> t.getPlaca().equals(placa)
                         && "ATIVO".equals(t.getStatus()));
+    }
+
+    @Override
+    public List<Ticket> listarTodos() {
+        return new ArrayList<>(banco.values());
+    }
+
+    @Override
+    public List<Ticket> listarPorStatus(String status) {
+        return banco.values().stream()
+                .filter(t -> status.equals(t.getStatus()))
+                .toList();
     }
 }

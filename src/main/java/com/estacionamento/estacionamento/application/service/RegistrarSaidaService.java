@@ -3,6 +3,8 @@ package com.estacionamento.estacionamento.application.service;
 import com.estacionamento.estacionamento.application.port.in.RegistrarSaidaUseCase;
 import com.estacionamento.estacionamento.application.port.out.TicketRepositoryPort;
 import com.estacionamento.estacionamento.application.port.out.VagaRepositoryPort;
+import com.estacionamento.estacionamento.domain.exception.TicketNaoEncontradoException;
+import com.estacionamento.estacionamento.domain.exception.VagaNaoEncontradaException;
 import com.estacionamento.estacionamento.domain.model.Ticket;
 import com.estacionamento.estacionamento.domain.model.Vaga;
 
@@ -31,9 +33,7 @@ public class RegistrarSaidaService
         Ticket ticket = ticketRepository
                 .buscarPorId(ticketId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Ticket nao encontrado"
-                        )
+                        new TicketNaoEncontradoException(ticketId)
                 );
 
         ticket.finalizar();
@@ -41,12 +41,10 @@ public class RegistrarSaidaService
         Vaga vaga = vagaRepository
                 .buscarPorId(ticket.getVagaId())
                 .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Vaga nao encontrada"
-                        )
+                        new VagaNaoEncontradaException(ticket.getVagaId())
                 );
 
-        vaga.setOcupada(false);
+        vaga.liberar();
         vagaRepository.salvar(vaga);
 
         return ticketRepository.salvar(ticket);
